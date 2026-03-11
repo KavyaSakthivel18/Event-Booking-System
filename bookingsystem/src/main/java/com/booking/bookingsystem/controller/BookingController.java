@@ -6,6 +6,7 @@ import com.booking.bookingsystem.service.BookingService;
 
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -18,21 +19,24 @@ public class BookingController {
         this.bookingService = bookingService;
     }
 
-    // POST /bookings
     @PostMapping
     public Booking createBooking(@RequestBody BookingRequest request) {
         return bookingService.createBooking(request);
     }
 
-    // GET /bookings/{id}
     @GetMapping("/{id}")
     public Optional<Booking> getBooking(@PathVariable Integer id) {
         return bookingService.getBooking(id);
     }
 
-    // DELETE /bookings/{id}
     @DeleteMapping("/{id}")
     public void cancelBooking(@PathVariable Integer id) {
         bookingService.cancelBooking(id);
+    }
+
+    // NEW ENDPOINT
+    @GetMapping("/user/{userId}")
+    public List<Booking> getUserBookings(@PathVariable Integer userId) {
+        return bookingService.getBookingsByUser(userId);
     }
 }

@@ -10,6 +10,7 @@ import com.booking.bookingsystem.repository.UserRepository;
 
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -68,4 +69,14 @@ public class BookingService {
         eventRepository.save(event);
         bookingRepository.save(booking);
     }
+
+    // Get bookings of a specific user
+        public List<Booking> getBookingsByUser(Integer userId) {
+            return bookingRepository.findByUserUserId(userId);
+        }
+
+        // Get bookings for an event (Admin)
+        public List<Booking> getBookingsByEvent(Integer eventId) {
+            return bookingRepository.findByEventEventId(eventId);
+        }
 }
