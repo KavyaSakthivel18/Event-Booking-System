@@ -1,5 +1,7 @@
- package com.booking.bookingsystem.entity;
- import jakarta.persistence.*;
+package com.booking.bookingsystem.entity;
+
+import jakarta.persistence.*;
+
 @Entity
 @Table(name = "users")
 public class User {
@@ -33,6 +35,3 @@ public class User {
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
 }
-
-
-
