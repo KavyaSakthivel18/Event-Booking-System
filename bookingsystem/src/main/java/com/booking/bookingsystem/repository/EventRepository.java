@@ -13,4 +13,3 @@ public interface EventRepository extends JpaRepository<Event, Integer> {
     // Search events by title (case-insensitive)
     List<Event> findByTitleContainingIgnoreCase(String keyword);
 }
-

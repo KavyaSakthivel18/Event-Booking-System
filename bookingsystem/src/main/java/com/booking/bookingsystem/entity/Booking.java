@@ -1,10 +1,12 @@
 package com.booking.bookingsystem.entity;
+
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "bookings")
 public class Booking {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer bookingId;
@@ -18,11 +20,11 @@ public class Booking {
     private Event event;
 
     private Integer ticketsBooked;
+
     private LocalDateTime bookingDate = LocalDateTime.now();
 
-    private String status = "CONFIRMED"; // CONFIRMED / CANCELLED
+    private String status = "CONFIRMED";
 
-    // Getters and Setters
     public Integer getBookingId() { return bookingId; }
     public void setBookingId(Integer bookingId) { this.bookingId = bookingId; }
 
