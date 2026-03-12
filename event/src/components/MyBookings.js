@@ -7,11 +7,21 @@ function MyBookings() {
 
   useEffect(() => {
 
-    API.get("/bookings")
+    API.get("/bookings/event/1")
       .then(res => setBookings(res.data))
       .catch(err => console.log(err));
 
   }, []);
+
+  const cancelBooking = (id) => {
+
+    API.delete(`/bookings/${id}`)
+      .then(() => {
+        alert("Booking Cancelled");
+        window.location.reload();
+      });
+
+  };
 
   return (
 
@@ -25,19 +35,24 @@ function MyBookings() {
 
       <div className="grid">
 
-        {bookings.map(booking => (
+        {bookings.map(b => (
 
-          <div className="card" key={booking.bookingId}>
+          <div className="card" key={b.bookingId}>
 
-            <h3>{booking.event.title}</h3>
+            <p>Event Title: {b.event.title}</p>
 
-            <p>Tickets: {booking.ticketsBooked}</p>
+            <p>Event ID: {b.event.eventId}</p>
 
-            <p>Status: {booking.status}</p>
+            <p>Tickets: {b.ticketsBooked}</p>
 
-            <p>
-              Booked At: {new Date(booking.bookingDate).toLocaleString()}
-            </p>
+            <p>Status: {b.status}</p>
+
+            <button
+              className="btn"
+              onClick={() => cancelBooking(b.bookingId)}
+            >
+              Cancel
+            </button>
 
           </div>
 
@@ -46,6 +61,7 @@ function MyBookings() {
       </div>
 
     </div>
+
   );
 }
 
