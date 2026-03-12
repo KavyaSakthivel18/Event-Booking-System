@@ -1,48 +1,49 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import API from "../api/api";
 
-const EventList = () => {
+function EventList() {
+
   const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch events from backend
-    axios.get("http://localhost:8080/events")
-      .then(response => {
-        setEvents(response.data);
-        setLoading(false);
-      })
-      .catch(error => {
-        console.error("Error fetching events:", error);
-        setLoading(false);
-      });
+    API.get("/events")
+      .then(res => setEvents(res.data))
+      .catch(err => console.error(err));
   }, []);
 
-  if (loading) {
-    return <p>Loading events...</p>;
-  }
-
   return (
-    <div className="event-list">
-      <h2>Available Events</h2>
-      {events.length === 0 ? (
-        <p>No events available.</p>
-      ) : (
-        <ul>
-          {events.map(event => (
-            <li key={event.eventId} className="event-item">
-              <h3>{event.title}</h3>
-              <p>{event.description}</p>
-              <p><strong>Date:</strong> {new Date(event.date).toLocaleString()}</p>
-              <p><strong>Location:</strong> {event.location}</p>
-              <p><strong>Tickets:</strong> {event.availableTickets} / {event.totalTickets}</p>
-            </li>
-          ))}
-        </ul>
-      )}
+    <div>
+
+      <h1>Upcoming Events</h1>
+
+      <div className="grid">
+
+        {events.map(event => (
+
+          <div className="card" key={event.eventId}>
+
+            <h3>{event.title}</h3>
+
+            <p>{event.description}</p>
+
+            <p>{event.location}</p>
+
+            <p>
+              Tickets: {event.availableTickets}/{event.totalTickets}
+            </p>
+
+            <Link to={`/events/${event.eventId}`} className="btn">
+              View Details
+            </Link>
+
+          </div>
+        ))}
+
+      </div>
+
     </div>
   );
-};
+}
 
 export default EventList;
-  

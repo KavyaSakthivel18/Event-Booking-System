@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/bookings")
 public class BookingController {
@@ -19,24 +20,32 @@ public class BookingController {
         this.bookingService = bookingService;
     }
 
+    // Create booking
     @PostMapping
     public Booking createBooking(@RequestBody BookingRequest request) {
         return bookingService.createBooking(request);
     }
 
+    // Get booking by id
     @GetMapping("/{id}")
     public Optional<Booking> getBooking(@PathVariable Integer id) {
         return bookingService.getBooking(id);
     }
 
+    // Cancel booking
     @DeleteMapping("/{id}")
     public void cancelBooking(@PathVariable Integer id) {
         bookingService.cancelBooking(id);
     }
 
-    // NEW ENDPOINT
-    @GetMapping("/user/{userId}")
-    public List<Booking> getUserBookings(@PathVariable Integer userId) {
-        return bookingService.getBookingsByUser(userId);
+    // Get bookings for an event
+    @GetMapping("/event/{eventId}")
+    public List<Booking> getBookingsByEvent(@PathVariable Integer eventId) {
+        return bookingService.getBookingsByEvent(eventId);
     }
+
+    @GetMapping
+public List<Booking> getAllBookings() {
+    return bookingService.getAllBookings();
+}
 }

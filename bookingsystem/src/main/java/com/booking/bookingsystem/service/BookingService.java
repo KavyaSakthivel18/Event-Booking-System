@@ -3,13 +3,12 @@ package com.booking.bookingsystem.service;
 import com.booking.bookingsystem.dto.BookingRequest;
 import com.booking.bookingsystem.entity.Booking;
 import com.booking.bookingsystem.entity.Event;
-import com.booking.bookingsystem.entity.User;
 import com.booking.bookingsystem.repository.BookingRepository;
 import com.booking.bookingsystem.repository.EventRepository;
-import com.booking.bookingsystem.repository.UserRepository;
 
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,15 +17,13 @@ public class BookingService {
 
     private final BookingRepository bookingRepository;
     private final EventRepository eventRepository;
-    private final UserRepository userRepository;
 
     public BookingService(
             BookingRepository bookingRepository,
-            EventRepository eventRepository,
-            UserRepository userRepository) {
+            EventRepository eventRepository) {
+
         this.bookingRepository = bookingRepository;
         this.eventRepository = eventRepository;
-        this.userRepository = userRepository;
     }
 
     public Booking createBooking(BookingRequest request) {
@@ -38,15 +35,17 @@ public class BookingService {
             throw new RuntimeException("Not enough tickets available");
         }
 
-        User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
         Booking booking = new Booking();
-        booking.setEvent(event);
-        booking.setUser(user);
-        booking.setTicketsBooked(request.getTickets());
 
-        event.setAvailableTickets(event.getAvailableTickets() - request.getTickets());
+        booking.setEvent(event);
+        booking.setTicketsBooked(request.getTickets());
+        booking.setBookingDate(LocalDateTime.now());
+        booking.setStatus("CONFIRMED");
+
+        event.setAvailableTickets(
+                event.getAvailableTickets() - request.getTickets()
+        );
+
         eventRepository.save(event);
 
         return bookingRepository.save(booking);
@@ -64,19 +63,20 @@ public class BookingService {
         booking.setStatus("CANCELLED");
 
         Event event = booking.getEvent();
-        event.setAvailableTickets(event.getAvailableTickets() + booking.getTicketsBooked());
+
+        event.setAvailableTickets(
+                event.getAvailableTickets() + booking.getTicketsBooked()
+        );
 
         eventRepository.save(event);
         bookingRepository.save(booking);
     }
 
-    // Get bookings of a specific user
-        public List<Booking> getBookingsByUser(Integer userId) {
-            return bookingRepository.findByUserUserId(userId);
-        }
+    public List<Booking> getBookingsByEvent(Integer eventId) {
+        return bookingRepository.findByEventEventId(eventId);
+    }
 
-        // Get bookings for an event (Admin)
-        public List<Booking> getBookingsByEvent(Integer eventId) {
-            return bookingRepository.findByEventEventId(eventId);
-        }
+    public List<Booking> getAllBookings() {
+    return bookingRepository.findAll();
+}
 }
