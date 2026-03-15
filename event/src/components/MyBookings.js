@@ -1,68 +1,60 @@
-import { useEffect, useState } from "react";
+import { useEffect,useState } from "react";
 import API from "../api/api";
 
-function MyBookings() {
+function MyBookings(){
 
-  const [bookings, setBookings] = useState([]);
+const [bookings,setBookings] = useState([]);
 
-  useEffect(() => {
+useEffect(()=>{
 
-    API.get("/bookings/event/1")
-      .then(res => setBookings(res.data))
-      .catch(err => console.log(err));
+API.get("/bookings")
+.then(res=>setBookings(res.data));
 
-  }, []);
+},[]);
 
-  const cancelBooking = (id) => {
+const cancel = async(id)=>{
 
-    API.delete(`/bookings/${id}`)
-      .then(() => {
-        alert("Booking Cancelled");
-        window.location.reload();
-      });
+await API.delete(`/bookings/${id}`);
 
-  };
+setBookings(bookings.filter(b => b.bookingId !== id));
 
-  return (
+}
 
-    <div>
+return(
 
-      <h1>My Bookings</h1>
+<div className="container">
 
-      {bookings.length === 0 && (
-        <p>No bookings yet</p>
-      )}
+<h2>My Bookings</h2>
 
-      <div className="grid">
+<div className="grid">
 
-        {bookings.map(b => (
+{bookings.map(b=>(
+<div className="card" key={b.bookingId}>
 
-          <div className="card" key={b.bookingId}>
+<h3>{b.event.title}</h3>
 
-            <p>Event Title: {b.event.title}</p>
+<p>Tickets: {b.ticketsBooked}</p>
 
-            <p>Event ID: {b.event.eventId}</p>
+<p>Status: {b.status}</p>
 
-            <p>Tickets: {b.ticketsBooked}</p>
+<p>Date: {new Date(b.bookingDate).toLocaleString()}</p>
 
-            <p>Status: {b.status}</p>
+<button
+className="btn"
+onClick={()=>cancel(b.bookingId)}
+>
+Cancel
+</button>
 
-            <button
-              className="btn"
-              onClick={() => cancelBooking(b.bookingId)}
-            >
-              Cancel
-            </button>
+</div>
+))}
 
-          </div>
+</div>
 
-        ))}
+</div>
 
-      </div>
+)
 
-    </div>
-
-  );
 }
 
 export default MyBookings;

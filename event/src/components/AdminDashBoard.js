@@ -1,150 +1,99 @@
-import { useEffect, useState } from "react";
+import { useEffect,useState } from "react";
 import API from "../api/api";
 
-function AdminDashboard() {
+function AdminDashboard(){
 
-  const [events, setEvents] = useState([]);
+const [events,setEvents] = useState([]);
 
-  const [newEvent, setNewEvent] = useState({
-    title: "",
-    description: "",
-    location: "",
-    date: "",
-    totalTickets: 0,
-    availableTickets: 0
-  });
+const [title,setTitle] = useState("");
+const [description,setDescription] = useState("");
+const [location,setLocation] = useState("");
+const [date,setDate] = useState("");
+const [tickets,setTickets] = useState("");
 
-  useEffect(() => {
-    fetchEvents();
-  }, []);
+useEffect(()=>{
 
-  const fetchEvents = () => {
-    API.get("/events")
-      .then(res => setEvents(res.data))
-      .catch(err => console.log(err));
-  };
+loadEvents();
 
-  const handleChange = (e) => {
-    setNewEvent({
-      ...newEvent,
-      [e.target.name]: e.target.value
-    });
-  };
+},[]);
 
-  const createEvent = (e) => {
-    e.preventDefault();
+const loadEvents = ()=>{
 
-    API.post("/events/admin", newEvent)
-      .then(() => {
-        alert("Event created");
-        fetchEvents();
-      })
-      .catch(() => alert("Error creating event"));
-  };
+API.get("/events")
+.then(res=>setEvents(res.data));
 
-  const deleteEvent = (id) => {
+}
 
-    API.delete(`/events/admin/${id}`)
-      .then(() => {
-        alert("Event deleted");
-        fetchEvents();
-      })
-      .catch(() => alert("Delete failed"));
-  };
+const createEvent = async()=>{
 
-  return (
+await API.post("/events/admin",{
 
-    <div>
+title,
+description,
+location,
+date,
+totalTickets:tickets,
+availableTickets:tickets
 
-      <h1>Admin Dashboard</h1>
+});
 
-      <div className="card">
+loadEvents();
 
-        <h3>Create Event</h3>
+}
 
-        <form onSubmit={createEvent}>
+const deleteEvent = async(id)=>{
 
-          <input
-            name="title"
-            placeholder="Title"
-            onChange={handleChange}
-            required
-          />
+await API.delete(`/events/admin/${id}`);
 
-          <input
-            name="description"
-            placeholder="Description"
-            onChange={handleChange}
-            required
-          />
+loadEvents();
 
-          <input
-            name="location"
-            placeholder="Location"
-            onChange={handleChange}
-            required
-          />
+}
 
-          <input
-            type="datetime-local"
-            name="date"
-            onChange={handleChange}
-            required
-          />
+return(
 
-          <input
-            type="number"
-            name="totalTickets"
-            placeholder="Total Tickets"
-            onChange={handleChange}
-            required
-          />
+<div className="container">
 
-          <input
-            type="number"
-            name="availableTickets"
-            placeholder="Available Tickets"
-            onChange={handleChange}
-            required
-          />
+<h2>Admin Dashboard</h2>
 
-          <button className="btn">Create Event</button>
+<h3>Create Event</h3>
 
-        </form>
+<input placeholder="Title" onChange={(e)=>setTitle(e.target.value)}/>
+<input placeholder="Description" onChange={(e)=>setDescription(e.target.value)}/>
+<input placeholder="Location" onChange={(e)=>setLocation(e.target.value)}/>
+<input type="datetime-local" onChange={(e)=>setDate(e.target.value)}/>
+<input type="number" placeholder="Tickets" onChange={(e)=>setTickets(e.target.value)}/>
 
-      </div>
+<button className="btn" onClick={createEvent}>
+Create Event
+</button>
 
-      <h2>All Events</h2>
+<hr/>
 
-      <div className="grid">
+<div className="grid">
 
-        {events.map(event => (
+{events.map(e=>(
+<div className="card" key={e.eventId}>
 
-          <div className="card" key={event.eventId}>
+<h3>{e.title}</h3>
 
-            <h3>{event.title}</h3>
+<p>{e.location}</p>
 
-            <p>{event.location}</p>
+<button
+className="btn"
+onClick={()=>deleteEvent(e.eventId)}
+>
+Delete
+</button>
 
-            <p>
-              Tickets: {event.availableTickets}/{event.totalTickets}
-            </p>
+</div>
+))}
 
-            <button
-              className="btn"
-              onClick={() => deleteEvent(event.eventId)}
-            >
-              Delete
-            </button>
+</div>
 
-          </div>
+</div>
 
-        ))}
+)
 
-      </div>
-
-    </div>
-  );
 }
 
 export default AdminDashboard;

@@ -1,24 +1,45 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Navbar(){
 
+const navigate = useNavigate();
+
+const logout = () => {
+
+sessionStorage.clear();
+navigate("/login");
+
+}
+
+const token = sessionStorage.getItem("token");
+
 return(
 
-<nav className="navbar">
+<div className="navbar">
 
-<Link to="/">Events</Link>
+<h2>Event Booking</h2>
 
-<Link to="/mybookings">My Bookings</Link>
+{token && (
+
+<div className="nav-links">
+
+<Link to="/dashboard">Events</Link>
+
+<Link to="/my-bookings">My Bookings</Link>
 
 <Link to="/admin">Admin</Link>
 
-<Link to="/login">Login</Link>
+<button className="btn" onClick={logout}>
+Logout
+</button>
 
-<Link to="/register">Register</Link>
+</div>
 
-</nav>
+)}
 
-);
+</div>
+
+)
 
 }
 

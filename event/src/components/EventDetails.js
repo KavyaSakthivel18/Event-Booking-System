@@ -1,43 +1,48 @@
-import { useParams, Link } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect,useState } from "react";
+import { useParams } from "react-router-dom";
 import API from "../api/api";
+import BookingForm from "./BookingForm";
 
-function EventDetails() {
+function EventDetails(){
 
-  const { id } = useParams();
+const {id} = useParams();
 
-  const [event, setEvent] = useState(null);
+const [event,setEvent] = useState(null);
 
-  useEffect(() => {
-    API.get(`/events/${id}`)
-      .then(res => setEvent(res.data))
-      .catch(err => console.log(err));
-  }, [id]);
+useEffect(()=>{
 
-  if (!event) return <p>Loading...</p>;
+API.get(`/events/${id}`)
+.then(res=>setEvent(res.data));
 
-  return (
+},[id]);
 
-    <div className="card">
+if(!event) return <p>Loading...</p>
 
-      <h2>{event.title}</h2>
+return(
 
-      <p>{event.description}</p>
+<div className="container">
 
-      <p>{event.location}</p>
+<h2>{event.title}</h2>
 
-      <p>
-        Tickets Left: {event.availableTickets}
-      </p>
+<p>{event.description}</p>
 
-      {event.availableTickets > 0 && (
-        <Link className="btn" to={`/book/${event.eventId}`}>
-          Book Ticket
-        </Link>
-      )}
+<p>Location: {event.location}</p>
 
-    </div>
-  );
+<p>Date: {new Date(event.date).toLocaleString()}</p>
+
+<p>Total Tickets: {event.totalTickets}</p>
+
+<p>Available: {event.availableTickets}</p>
+
+<BookingForm
+eventId={event.eventId}
+availableTickets={event.availableTickets}
+/>
+
+</div>
+
+)
+
 }
 
 export default EventDetails;

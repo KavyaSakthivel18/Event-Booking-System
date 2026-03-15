@@ -1,46 +1,67 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter,Routes,Route,Navigate } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
-import EventList from "./components/EventList";
-import EventDetails from "./components/EventDetails";
-import BookingForm from "./components/BookingForm";
-import MyBookings from "./components/MyBookings";
-import AdminDashBoard from "./components/AdminDashBoard";
-
 import Login from "./components/Login";
 import Register from "./components/Register";
+import EventList from "./components/EventList";
+import EventDetails from "./components/EventDetails";
+import MyBookings from "./components/MyBookings";
+import AdminDashboard from "./components/AdminDashboard";
+import ProtectedRoute from "./components/ProtectedRoute";
 
-import "./styles/style.css";
+function App(){
 
-function App() {
+return(
 
-  return (
+<BrowserRouter>
 
-    <Router>
+<Navbar/>
 
-      <Navbar />
+<Routes>
 
-      <Routes>
+<Route path="/" element={<Navigate to="/login"/>}/>
 
-        <Route path="/" element={<EventList />} />
+<Route path="/login" element={<Login/>}/>
+<Route path="/register" element={<Register/>}/>
 
-        <Route path="/events/:id" element={<EventDetails />} />
+<Route path="/dashboard"
+element={
+<ProtectedRoute>
+<EventList/>
+</ProtectedRoute>
+}
+/>
 
-        <Route path="/book/:id" element={<BookingForm />} />
+<Route path="/events/:id"
+element={
+<ProtectedRoute>
+<EventDetails/>
+</ProtectedRoute>
+}
+/>
 
-        <Route path="/mybookings" element={<MyBookings />} />
+<Route path="/my-bookings"
+element={
+<ProtectedRoute>
+<MyBookings/>
+</ProtectedRoute>
+}
+/>
 
-        <Route path="/admin" element={<AdminDashBoard />} />
+<Route path="/admin"
+element={
+<ProtectedRoute>
+<AdminDashboard/>
+</ProtectedRoute>
+}
+/>
 
-        <Route path="/login" element={<Login />} />
+</Routes>
 
-        <Route path="/register" element={<Register />} />
+</BrowserRouter>
 
-      </Routes>
+)
 
-    </Router>
-
-  );
 }
 
 export default App;

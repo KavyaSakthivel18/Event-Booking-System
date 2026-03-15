@@ -1,49 +1,65 @@
-import { useEffect, useState } from "react";
+import { useEffect,useState } from "react";
 import { Link } from "react-router-dom";
 import API from "../api/api";
 
-function EventList() {
+function EventList(){
 
-  const [events, setEvents] = useState([]);
+const [events,setEvents] = useState([]);
+const [search,setSearch] = useState("");
 
-  useEffect(() => {
-    API.get("/events")
-      .then(res => setEvents(res.data))
-      .catch(err => console.error(err));
-  }, []);
+useEffect(()=>{
 
-  return (
-    <div>
+API.get("/events/upcoming")
+.then(res=>setEvents(res.data))
+.catch(()=>alert("Failed to load events"));
 
-      <h1>Upcoming Events</h1>
+},[]);
 
-      <div className="grid">
+const filtered = events.filter(e =>
+e.title.toLowerCase().includes(search.toLowerCase())
+);
 
-        {events.map(event => (
+return(
 
-          <div className="card" key={event.eventId}>
+<div className="container">
 
-            <h3>{event.title}</h3>
+<h1>Upcoming Events</h1>
 
-            <p>{event.description}</p>
+<input
+placeholder="Search events"
+onChange={(e)=>setSearch(e.target.value)}
+/>
 
-            <p>{event.location}</p>
+<div className="grid">
 
-            <p>
-              Tickets: {event.availableTickets}/{event.totalTickets}
-            </p>
+{filtered.map(event=>(
 
-            <Link to={`/events/${event.eventId}`} className="btn">
-              View Details
-            </Link>
+<div className="card" key={event.eventId}>
 
-          </div>
-        ))}
+<h3>{event.title}</h3>
 
-      </div>
+<p>{event.description}</p>
 
-    </div>
-  );
+<p>Location: {event.location}</p>
+
+<p>Date: {new Date(event.date).toLocaleDateString()}</p>
+
+<p>Available: {event.availableTickets}</p>
+
+<Link to={`/events/${event.eventId}`} className="btn">
+View Details
+</Link>
+
+</div>
+
+))}
+
+</div>
+
+</div>
+
+)
+
 }
 
 export default EventList;

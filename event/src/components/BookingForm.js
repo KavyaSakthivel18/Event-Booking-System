@@ -1,45 +1,57 @@
-import { useParams } from "react-router-dom";
 import { useState } from "react";
 import API from "../api/api";
 
-function BookingForm() {
+function BookingForm({eventId,availableTickets}){
 
-  const { id } = useParams();
+const [tickets,setTickets] = useState(1);
 
-  const [tickets, setTickets] = useState(1);
+const book = async()=>{
 
-  const handleBooking = () => {
+if(tickets > availableTickets){
 
-  API.post("/bookings", {
-    eventId: id,
-    tickets: tickets
-  })
-  .then(() => alert("Booking successful"))
-  .catch(err => {
-    console.error(err);
-    alert("Booking failed");
-  });
+alert("Tickets exceed available limit");
+return;
 
-};
-  return (
+}
 
-    <div className="card">
+try{
 
-      <h2>Book Tickets</h2>
+await API.post("/bookings",{
+eventId,
+tickets
+});
 
-      <input
-        type="number"
-        value={tickets}
-        min="1"
-        onChange={(e) => setTickets(e.target.value)}
-      />
+alert("Booking successful");
 
-      <button className="btn" onClick={handleBooking}>
-        Book
-      </button>
+}catch{
 
-    </div>
-  );
+alert("Booking failed");
+
+}
+
+}
+
+return(
+
+<div>
+
+<h3>Book Tickets</h3>
+
+<input
+type="number"
+min="1"
+value={tickets}
+onChange={(e)=>setTickets(parseInt(e.target.value))}
+/>
+
+<button className="btn" onClick={book}>
+Book
+</button>
+
+</div>
+
+)
+
 }
 
 export default BookingForm;

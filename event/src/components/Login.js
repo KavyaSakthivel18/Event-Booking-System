@@ -1,34 +1,42 @@
 import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import API from "../api/api";
-import { useNavigate } from "react-router-dom";
 
 function Login(){
 
-const [email,setEmail]=useState("");
-const [password,setPassword]=useState("");
+const [email,setEmail] = useState("");
+const [password,setPassword] = useState("");
 
 const navigate = useNavigate();
 
-const handleLogin=()=>{
+const login = async(e)=>{
 
-API.post("/auth/login",{
-email:email,
-password:password
-})
-.then(res=>{
-localStorage.setItem("token",res.data.token);
-alert("Login Success");
-navigate("/");
-})
-.catch(()=>alert("Login Failed"));
+e.preventDefault();
 
-};
+try{
+
+const res = await API.post("/auth/login",{email,password});
+
+sessionStorage.setItem("token",res.data.token);
+sessionStorage.setItem("userId",res.data.userId);
+
+navigate("/dashboard");
+
+}catch(err){
+
+alert("Invalid email or password");
+
+}
+
+}
 
 return(
 
-<div className="card">
+<div className="form-container">
 
 <h2>Login</h2>
+
+<form onSubmit={login}>
 
 <input
 placeholder="Email"
@@ -41,13 +49,18 @@ placeholder="Password"
 onChange={(e)=>setPassword(e.target.value)}
 />
 
-<button className="btn" onClick={handleLogin}>
-Login
-</button>
+<button className="btn">Login</button>
+
+</form>
+
+<p>
+No account?
+<Link to="/register"> Register</Link>
+</p>
 
 </div>
 
-);
+)
 
 }
 

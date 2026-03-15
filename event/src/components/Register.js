@@ -1,35 +1,46 @@
 import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import API from "../api/api";
-import { useNavigate } from "react-router-dom";
 
 function Register(){
 
-const [name,setName]=useState("");
-const [email,setEmail]=useState("");
-const [password,setPassword]=useState("");
+const [name,setName] = useState("");
+const [email,setEmail] = useState("");
+const [password,setPassword] = useState("");
 
-const navigate=useNavigate();
+const navigate = useNavigate();
 
-const handleRegister=()=>{
+const register = async(e)=>{
 
-API.post("/auth/register",{
-name:name,
-email:email,
-password:password
-})
-.then(()=>{
-alert("Registration Successful");
+e.preventDefault();
+
+try{
+
+await API.post("/auth/register",{
+name,
+email,
+password
+});
+
+alert("Registration successful");
+
 navigate("/login");
-})
-.catch(()=>alert("Registration Failed"));
 
-};
+}catch{
+
+alert("Registration failed");
+
+}
+
+}
 
 return(
 
-<div className="card">
+<div className="form-container">
 
 <h2>Register</h2>
+
+<form onSubmit={register}>
 
 <input
 placeholder="Name"
@@ -47,13 +58,18 @@ placeholder="Password"
 onChange={(e)=>setPassword(e.target.value)}
 />
 
-<button className="btn" onClick={handleRegister}>
-Register
-</button>
+<button className="btn">Register</button>
+
+</form>
+
+<p>
+Already have account?
+<Link to="/login"> Login</Link>
+</p>
 
 </div>
 
-);
+)
 
 }
 
