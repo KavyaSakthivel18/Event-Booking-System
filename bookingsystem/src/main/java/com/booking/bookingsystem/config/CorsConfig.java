@@ -20,7 +20,7 @@ public class CorsConfig {
                 registry.addMapping("/**")
                         .allowedOrigins(
                                 "http://localhost:3000",
-                                "https://event-booking-system-murex.vercel.app/"
+                                "https://event-booking-system-murex.vercel.app"
                         )
                         .allowedMethods(
                                 "GET",
